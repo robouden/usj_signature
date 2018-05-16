@@ -1,0 +1,269 @@
+2018-05-17  Orginal by Youssef
+2018-05-17  Modified by Rob Oudendijk for USJ entries
+			added office 2010 entries
+			
+
+
+On Error Resume Next
+
+Const HKEY_CURRENT_USER = &H80000001
+strComputer = "."
+Set objRegistry=GetObject("winmgmts:\\" & _ 
+    strComputer & "\root\default:StdRegProv")
+    
+strNew = "NewSignature"
+strReply = "ReplySignature"
+str10 = "Software\Microsoft\Office\10.0\Common\MailSettings"
+str11 = "Software\Microsoft\Office\11.0\Common\MailSettings"
+str12 = "Software\Microsoft\Office\12.0\Common\MailSettings"
+str14 = "Software\Microsoft\Office\14.0\Common\MailSettings"
+str15 = "Software\Microsoft\Office\15.0\Common\MailSettings"
+str16 = "Software\Microsoft\Office\16.0\Common\MailSettings"
+
+objRegistry.DeleteValue HKEY_CURRENT_USER, str11, strNew
+objRegistry.DeleteValue HKEY_CURRENT_USER, str11, strReply
+objRegistry.DeleteValue HKEY_CURRENT_USER, str12, strNew
+objRegistry.DeleteValue HKEY_CURRENT_USER, str12, strReply
+objRegistry.DeleteValue HKEY_CURRENT_USER, str14, strNew
+objRegistry.DeleteValue HKEY_CURRENT_USER, str14, strReply
+objRegistry.DeleteValue HKEY_CURRENT_USER, str15, strNew
+objRegistry.DeleteValue HKEY_CURRENT_USER, str15, strReply
+objRegistry.DeleteValue HKEY_CURRENT_USER, str16, strNew
+objRegistry.DeleteValue HKEY_CURRENT_USER, str16, strReply
+
+Set objShell = CreateObject("WScript.Shell")
+userProfilePath = objShell.ExpandEnvironmentStrings("%UserProfile%")
+
+
+
+strPath = userProfilePath & "\AppData\Roaming\Microsoft\Signatures"
+
+
+
+Set fso = CreateObject("Scripting.FileSystemObject")
+Set oFolder = fso.GetFolder(strPath)
+Set oFileCollection = oFolder.Files 
+
+
+arrFolders = Array()
+
+For Each oFolder In oFolder.SubFolders
+' Note : Only use *lowercase* letters in the folder names below:
+If Not LCase(oFolder.Name) = "FE Signature_files" _
+Then
+
+oFolder.Delete(True)
+'intCount = UBound(arrFolders) + 1
+'ReDim Preserve arrFolders(intCount)
+'arrFolders(intCount) = oFolder.Path
+End If
+
+
+
+Next
+
+
+For each oFile in oFileCollection
+
+'This section will filter the log file as I have used for for test case 
+'Specify the Extension of file that you want to delete 
+'and the number with Number of character in the file extension 
+	
+	If LCase(Left(Cstr(oFile.Name), 14)) <> "FE Signature" Then
+
+ 	 				oFile.Delete(True) 
+ 	End If 
+ 
+  
+Next 
+
+Set oFSO = Nothing 
+Set oFolder = Nothing 
+Set oFileCollection = Nothing 
+Set oFile = Nothing 
+
+
+
+Set objSysInfo = CreateObject("ADSystemInfo")
+
+strUser = objSysInfo.UserName
+Set objUser = GetObject("LDAP://" & strUser)
+
+strName = objuser.FirstName + " " + objUser.LastName
+strTitle = objUser.Title
+strCompany = objUser.Company
+strOffice = objUser.physicalDeliveryOfficeName
+strPhone = objUser.telephonenumber
+strMobile = objUser.mobile
+strDepartment = objUser.Department
+strPOBox = objUser.PostOfficeBox
+strCity = objUser.l
+strCountry = objUser.co
+strMail = objuser.mail
+strHypEmail = objUser.FirstName & "." & objUser.LastName & "@farahexperiences.com"
+
+strlink = "www.farahexperiences.com "
+strweb = "Learn more about Ferrari World Abu Dhabi, Yas Waterworld and other Farah experiences"
+strLogoFWAD = "\\aeadvsi003-fwfs\emailsignatureall$\FARAH Logo_Vertical.jpg"
+strUnderline = "\\aeadvsi003-fwfs\emailsignatureall$\Under_FE.jpg"
+Set objWord = CreateObject("Word.Application")
+Set objDoc = objWord.Documents.Add()
+Set objSelection = objWord.Selection
+setobjRange = objDoc.Range()
+Set objEmailOptions = objWord.EmailOptions
+Set objSignatureObject = objEmailOptions.EmailSignature
+Set objSignatureEntries = objSignatureObject.EmailSignatureEntries
+objSelection.InlineShapes.AddPicture(strLogoFWAD)
+'----------------------------------
+objSelection.TypeText Chr(10)
+objSelection.Font.Color = RGB(65,64,66)
+objSelection.Font.Size = "11"
+objSelection.Font.Name = "Calibri"
+objSelection.Font.Bold = true 
+objSelection.TypeText strName
+'----------------------------------
+objSelection.TypeText Chr(11) 
+objSelection.Font.Color = RGB(65,64,66)
+objSelection.Font.Size = "10"
+objSelection.Font.Name = "Calibri"
+objSelection.Font.Bold = false 
+objSelection.TypeText strTitle
+'----------------------------------
+objSelection.TypeText Chr(11) 
+objSelection.Font.Color = RGB(65,64,66)
+objSelection.Font.Size = "10"
+objSelection.Font.Name = "Calibri"
+objSelection.Font.Bold = false
+objSelection.TypeText strDepartment 
+'----------------------------------
+objSelection.TypeText Chr(10) 
+objSelection.Font.Color = RGB(65,64,66)
+objSelection.Font.Size = "10"
+objSelection.Font.Name = "Calibri"
+objSelection.Font.Bold = true 
+objSelection.TypeText "Farah Experiences LLC. "
+'----------------------------------
+'objSelection.TypeText Chr(11)
+objSelection.Font.Color = RGB(65,64,66)
+objSelection.Font.Size = "10"
+objSelection.Font.Name = "Calibri"
+objSelection.Font.Bold = false 
+objSelection.TypeText "P.O. Box 128717, Abu Dhabi,UAE" 
+'----------------------------------
+objSelection.TypeText Chr(11)
+objSelection.Font.Color = RGB(65,64,66)
+objSelection.Font.Size = "10"
+objSelection.Font.Name = "Calibri"
+objSelection.Font.Bold = True 
+objSelection.TypeText "M  " 
+objSelection.Font.Color = RGB(65,64,66)
+objSelection.Font.Size = "10"
+objSelection.Font.Name = "Calibri"
+objSelection.Font.Bold = false 
+objSelection.TypeText strMobile 
+objSelection.TypeText "           " 
+'----------------------------------
+objSelection.TypeText Chr(11)
+objLink.Range.Font.Underline = false
+objSelection.Font.Color = RGB(65,64,66)
+objSelection.Font.Size = "10"
+objSelection.Font.Name = "Calibri"
+objSelection.Font.Bold = True
+objSelection.TypeText "D   "
+objSelection.Font.Color = RGB(65,64,66)
+objSelection.Font.Size = "10"
+objSelection.Font.Name = "Calibri"
+objSelection.Font.Bold = false 
+objSelection.TypeText strPhone
+objSelection.TypeText "            " 
+objLink.Range.Font.Name = "Calibri" 
+objLink.Range.Font.Size = "10" 
+objLink.Range.Font.Color = RGB(65,64,66) 
+'objLink.Range.Font.Underline = True 
+objLink.Range.Font.Bold = false 
+'----------------------------------
+objSelection.TypeText Chr(11)
+objSelection.Font.Color = RGB(65,64,66)
+objSelection.Font.Size = "10"
+objSelection.Font.Name = "Calibri"
+objSelection.Font.Bold = True
+objSelection.Font.Underline = false
+objSelection.TypeText "E  "
+objSelection.Font.Color = RGB(65,64,66)
+objSelection.Font.Size = "10"
+objSelection.Font.Name = "Calibri"
+objSelection.Font.Bold = False
+objSelection.Font.Underline = False
+'objDoc.Hyperlinks.Add objSelection.Range, "mailto:" & strmail,,,strmail
+Set objlink = objSelection.Hyperlinks.Add(objSelection.range,"Mailto:" & strMail & " ",,,strMail)
+objLink.Range.Font.Name = "Calibri" 
+objLink.Range.Font.Size = "10" 
+objLink.Range.Font.Color = RGB(65,64,66) 
+'objLink.Range.Font.Underline = True 
+objLink.Range.Font.Bold = false 
+'----------------------------------
+objSelection.TypeText Chr(11)
+objSelection.Font.Color = RGB(65,64,66)
+objSelection.Font.Size = "10"
+objSelection.Font.Name = "Calibri"
+objSelection.Font.Bold = True
+objSelection.Font.Underline = false
+objSelection.TypeText "W  "
+objSelection.Font.Color = RGB(65,64,66)
+objSelection.Font.Size = "10"
+objSelection.Font.Name = "Calibri"
+objSelection.Font.Bold = False
+objSelection.Font.Underline = False
+'objDoc.Hyperlinks.Add objSelection.Range, strlink,,,strlink
+Set objlink = objSelection.Hyperlinks.Add(objSelection.Range, " " & strlink & " ", , , strlink, "_blank")
+objLink.Range.Font.Name = "Calibri" 
+objLink.Range.Font.Size = "11" 
+objLink.Range.Font.Color = RGB(65,64,66) 
+'objLink.Range.Font.Underline = True 
+objLink.Range.Font.Bold = false 
+'----------------------------------
+objSelection.TypeText Chr(10)
+'Set objlink = objSelection.Hyperlinks.Add(objSelection.range,strlink & " ",,,strweb)
+objLink.Range.Font.Name = "Calibri" 
+objLink.Range.Font.Size = "10" 
+objLink.Range.Font.Color = RGB(128,128,128)
+objLink.Range.Font.Underline = False 
+objSelection.Font.Italic = True
+objLink.Range.Font.Bold = False
+objSelection.TypeText "Learn more about Ferrari World Abu Dhabi, Yas Waterworld and other Farah experiences "
+'----------------------------------
+objLink.Range.Font.Name = "Calibri" 
+objLink.Range.Font.Size = "10" 
+objLink.Range.Font.Color = RGB(128,128,128)
+objSelection.Font.Italic = True
+objLink.Range.Font.Bold = False
+objLink.Range.Font.Underline = True
+Set objlink = objSelection.Hyperlinks.Add(objSelection.range,strlink & " ",,,"here")
+'objDoc.Hyperlinks.Add objSelection.Range, strlink,,,"here"
+'----------------------------------
+objLink.Range.Font.Name = "Calibri" 
+objLink.Range.Font.Size = "10" 
+objLink.Range.Font.Color = RGB(128,128,128)
+objLink.Range.Font.Underline = False 
+objSelection.Font.Italic = True
+objLink.Range.Font.Bold = False
+objSelection.TypeText "."
+'----------------------------------
+objSelection.TypeText Chr(11)
+objSelection.InlineShapes.AddPicture(strUnderline)
+'----------------------------------
+Set objSelection = objDoc.Range() 
+objSignatureEntries.Add "FE Signature", objSelection 
+objSignatureObject.NewMessageSignature = "FE Signature" 
+objSignatureObject.ReplyMessageSignature = "FE Signature" 
+objDoc.Saved = True 
+objWord.Quit 
+Set objShell = WScript.CreateObject("WScript.Shell")
+objShell.RegWrite "HKEY_CURRENT_USER\Software\Microsoft\Office\11.0\Common\MailSettings\NewSignature", "FW Signature", "REG_SZ"
+objShell.RegWrite "HKEY_CURRENT_USER\Software\Microsoft\Office\11.0\Common\MailSettings\ReplySignature", "FE Signature", "REG_SZ"
+objShell.RegWrite "HKEY_CURRENT_USER\Software\Microsoft\Office\12.0\Common\MailSettings\NewSignature", "FE Signature", "REG_SZ"
+objShell.RegWrite "HKEY_CURRENT_USER\Software\Microsoft\Office\12.0\Common\MailSettings\ReplySignature", "FE Signature", "REG_SZ"
+objShell.RegWrite "HKEY_CURRENT_USER\Software\Microsoft\Office\14.0\Common\MailSettings\NewSignature", "FE Signature", "REG_SZ"
+objShell.RegWrite "HKEY_CURRENT_USER\Software\Microsoft\Office\14.0\Common\MailSettings\ReplySignature", "FE Signature", "REG_SZ"
+objShell.RegWrite "HKEY_CURRENT_USER\Software\Microsoft\Office\15.0\Common\MailSettings\NewSignature", "FE Signature", "REG_SZ"
+objShell.RegWrite "HKEY_CURRENT_USER\Software\Microsoft\Office\15.0\Common\MailSettings\ReplySignature", "FE Signature", "REG_SZ"
