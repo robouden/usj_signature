@@ -2,7 +2,7 @@
 2018-05-17  Modified by Rob Oudendijk for USJ entries
 			added office 2010 entries
 			Added Github repro at https://github.com/robouden/usj_signature
-			
+
 
 
 On Error Resume Next
@@ -82,7 +82,6 @@ Set oFSO = Nothing
 Set oFolder = Nothing 
 Set oFileCollection = Nothing 
 Set oFile = Nothing 
-
 
 
 Set objSysInfo = CreateObject("ADSystemInfo")
